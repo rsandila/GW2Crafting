@@ -1,0 +1,33 @@
+﻿@page
+@model GW2Crafting.Pages.CharacterSelectionModel
+@{
+    ViewData["Title"] = "Character Selection";
+}
+
+<div class="text-center">
+    <h1 class="display-8">Welcome</h1>
+    <p>Guild Wars 2 Crafting - Character Selection</p>    
+</div>
+<div>
+    <a asp-page="Index">Login as another user</a>
+</div>
+<div>
+<form method="post">
+    <table>
+    <tr><td>Select character:</td></tr>
+   @foreach (var name in Model.Characters)
+   {
+       <tr>
+           <td>
+            <input name="SelectedCharacter" type="radio" value="@name" checked="@(Model.SelectedCharacter.Equals(name))"/>
+            @name
+        </td>
+       </tr>
+   }
+   <tr><td></td></tr>
+    <tr>
+        <td><input type="submit"/></td>
+    </tr>
+   </table>
+</form>
+</div>

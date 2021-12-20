@@ -1,0 +1,40 @@
+﻿@page
+@model GW2Crafting.Pages.InventoryModel
+@{
+    ViewData["Title"] = $"Guild Wars 2 Crafting - Character Inventory {Model.CharacterName}";
+}
+<div class="text-center">
+    <h3 class="display-8">@ViewData["title"]</h3>
+</div>
+<div id="app-2">
+  <a asp-page="CharacterSelection">Select another character</a>
+  <table class="table">
+     <thead class="thead-light">
+        <tr>
+            <td></td>
+            <td>Id</td>
+            <td>Name</td>
+            <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Description</td>
+            <td>Type</td>
+            <td>Level</td>
+            <td>Rarity</td>
+            <td>Vendor Value</td>
+            <td>Flags</td>
+        </tr>
+     </thead>
+    @foreach (var item in Model.Inventory.OrderByDescending(w => w.VendorValue))
+    {
+    <tr>
+        <td><img src=@item.Icon widht=32 height=32/></td>
+        <td><a href="https://api.guildwars2.com/v2/items/@item.Id" target="_blank">@item.Id</a></td>
+        <td>@item.Name</td>
+        <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">@item.Description</td>
+        <td>@item.Type</td>
+        <td>@item.Level</td>
+        <td>@item.Rarity</td>
+        <td>@item.VendorValue</td>
+        <td>@string.Join(",",item.Flags)</td>
+    </tr>
+    }
+  </table>
+</div>

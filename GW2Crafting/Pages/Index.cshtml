@@ -1,0 +1,32 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-8">Welcome</h1>
+    <p>Guild Wars 2 Crafting</p>    
+</div>
+<div>
+<form method="post">
+  <table>
+    <tr>
+        <td>Access Token:</td><td><input name="AccessToken" type="input" value="@Model.AccessToken" /></td>
+    </tr>
+    @foreach (var option in Enum.GetValues(typeof(GW2Crafting.Models.MainListType)))
+{
+    <tr>
+        <td>
+            <input name="Selection.ListType" type="radio" value="@option" checked="@(Model.Selection.ListType == (GW2Crafting.Models.MainListType)option)"/>
+            @option
+        </td>
+    </tr>
+}  
+    <tr></tr>
+    <tr>
+        <td><input type="submit"/></td>
+    </tr>
+  </table>
+</form>
+</div>

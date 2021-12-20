@@ -1,0 +1,50 @@
+﻿@page
+@model GW2Crafting.Pages.RecipesModel
+@{
+    ViewData["Title"] = $"Guild Wars 2 Crafting - Known Recipes for {Model.CharacterName}";
+}
+<div class="text-center">
+    <h3 class="display-8">@ViewData["title"]</h3>
+</div>
+<div id="app-2">
+  <a asp-page="Index">Select another action</a>
+  <table class="table">
+     <thead class="thead-light">
+        <tr>
+            <td></td>
+            <td>Output Id</td>
+            <td>Output Name</td>
+            <td>Listing Sell Price</td>
+            <td>Listing Ingredients Price</td>
+            <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Output Description</td>
+            <td>Output Type</td>
+            <td>Output Level</td>
+            <td>Output Rarity</td>
+            <td>Output Vendor Value</td>
+            <td>Output Flags</td>
+            <td>Disciplines</td>
+            <td>Minimum Rating</td>
+            <td>Items Created</td>
+        </tr>
+     </thead>
+    @foreach (var item in Model.Recipes.OrderByDescending(w => w.ListingSellPrice - w.ListingIngredientsPrice))
+    {
+    <tr>
+        <td><img src=@item.OutputItem.Icon widht=32 height=32/></td>
+        <td><a href="https://api.guildwars2.com/v2/items/@item.OutputItem.Id" target="_blank">@item.OutputItem.Id</a></td>
+        <td>@item.OutputItem.Name</td>
+        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingSellPrice)</td>
+        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingIngredientsPrice)</td>
+        <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">@item.OutputItem.Description</td>
+        <td>@item.OutputItem.Type</td>
+        <td>@item.OutputItem.Level</td>
+        <td>@item.OutputItem.Rarity</td>
+        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.OutputItem.VendorValue)</td>
+        <td>@string.Join(",",item.OutputItem.Flags)</td>
+        <td>@string.Join(",",item.Original.CraftingDisciplines)</td>
+        <td>@item.Original.MinRating</td>
+        <td>@item.Original.OutputItemCount</td>
+    </tr>
+    }
+  </table>
+</div>
