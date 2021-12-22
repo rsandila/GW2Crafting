@@ -71,7 +71,7 @@ namespace GW2Crafting.Pages
                 return RedirectToPage("Index");
             }
         }
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             return Page();
         }

@@ -127,14 +127,14 @@ namespace GW2Crafting.Caching
             }
             
         }
-        internal IEnumerable<CommerceListings> GetListingsFor(IEnumerable<int> listingIds)
+        internal ICollection<CommerceListings> GetListingsFor(IEnumerable<int> listingIds)
         {
             var commerceListings = cache.Get<Dictionary<int, CommerceListings>>("CommerceListings");
             if (commerceListings == null)
             {
                 return Array.Empty<CommerceListings>();
             }
-            return commerceListings.Where(w => listingIds.Contains(w.Key)).Select(w => w.Value);
+            return commerceListings.Where(w => listingIds.Contains(w.Key)).Select(w => w.Value).ToList();
         }
 
 

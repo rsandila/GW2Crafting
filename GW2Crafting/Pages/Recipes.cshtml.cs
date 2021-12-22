@@ -11,7 +11,7 @@ namespace GW2Crafting.Pages
 {
     public class Gw2ResolvedRecipe
     {
-        public Gw2ResolvedRecipe(Gw2Recipe recipe, Gw2Database _database, Gw2TokenCache _tokenCache, Guid id)
+        public Gw2ResolvedRecipe(Gw2Recipe recipe, Gw2Database _database, Gw2TokenCache _tokenCache)
         {
             Original = recipe;
             OutputItem = _database.GetItem(recipe.OutputItemId);
@@ -19,20 +19,24 @@ namespace GW2Crafting.Pages
             {
                 throw new InvalidDataException("recipe.Ingredients can not be null");
             }
-            Ingredients = recipe.Ingredients.Select(w => _database.GetItem(w.Id));
-            var outputItemPrice = Listings.GetListingsFor(_tokenCache, id, new[] { Original.OutputItemId });
-            var ingredientPrices = Listings.GetListingsFor(_tokenCache, id, recipe.Ingredients.Select(w => w.Id));
-            ListingSellPrice = outputItemPrice.FirstOrDefault()?.Buys?.OrderByDescending(w => w.UnitPrice)?.FirstOrDefault()?.UnitPrice ?? 0;
+            Ingredients = recipe.Ingredients.Select(w => _database.GetMaterialItem(w.Id, w.Count, 0, String.Empty));
+            var outputItemPrice = Listings.GetListingsFor(_tokenCache, new[] { Original.OutputItemId });
+            var ingredientPrices = Listings.GetListingsFor(_tokenCache, recipe.Ingredients.Select(w => w.Id));
+            ListingSellPrice = outputItemPrice.GetSellingUnitPrice(0);
             ListingIngredientsPrice = 0;
+            if (ingredientPrices.Count() != recipe.Ingredients.Count())
+            {
+                ListingIngredientsPrice = 1000000;
+            }
             foreach (var item in ingredientPrices)
             {
                 var ingredientCount = recipe.Ingredients?.FirstOrDefault(w => w.Id == item.Id)?.Count ?? 1000000;
-                ListingIngredientsPrice += (item.Buys?.OrderByDescending(w => w.UnitPrice)?.FirstOrDefault()?.UnitPrice ?? 1000000) * ingredientCount;
+                ListingIngredientsPrice += item.GetSellingUnitPrice(1000000, ingredientCount) * ingredientCount;
             }
         }
         public Gw2Recipe Original { get; set; }
         public Gw2Item? OutputItem { get; set; }
-        public IEnumerable<Gw2Item?> Ingredients { get; set; }
+        public IEnumerable<MaterialItem?> Ingredients { get; set; }
         public int ListingSellPrice { get; set; }
         public int ListingIngredientsPrice { get; set; }
     }
@@ -81,13 +85,13 @@ namespace GW2Crafting.Pages
             }
             CharacterName = character.Name;
             var resolvedRecipies = character.Recipes.Select(w => _database.GetRecipe(w));
-            await Listings.CacheListingsFor(_tokenCache, id, resolvedRecipies.Select(w => w.OutputItemId));
-            await Listings.CacheListingsFor(_tokenCache, id, resolvedRecipies.SelectMany(w => w.Ingredients.Select(q => q.Id)));
+            await Listings.CacheListingsFor(_tokenCache, id, resolvedRecipies.Select(w => w?.OutputItemId ?? 0));
+            await Listings.CacheListingsFor(_tokenCache, id, resolvedRecipies.SelectMany(w => w?.Ingredients?.Select(q => q.Id) ?? Array.Empty<int>()));
             foreach (var item in resolvedRecipies)
             {
                 if (item != null)
                 {
-                    Recipes.Add(new Gw2ResolvedRecipe(item, _database, _tokenCache, id));
+                    Recipes.Add(new Gw2ResolvedRecipe(item, _database, _tokenCache));
                 }
             }
             return Page();

@@ -1,4 +1,5 @@
 ﻿using GW2Crafting.Caching.Models;
+using GW2Crafting.Pages;
 using Gw2Sharp;
 using Gw2Sharp.WebApi.V2.Models;
 using LiteDB;
@@ -67,6 +68,29 @@ namespace GW2Crafting.Caching
         public Gw2Item? GetItem(int id)
         {
             return _items.Query().Where(w => w.Id == id).FirstOrDefault();
+        }
+        public MaterialItem? GetMaterialItem(int id, int quantity, int unitSellPrice, string categoryName)
+        {
+            var item = GetItem(id);
+            if (item == null)
+            {
+                return null;
+            }
+            return new MaterialItem
+            {
+                Id = item.Id,
+                CategoryName = categoryName,
+                Count = quantity,
+                Description = item.Description,
+                Flags = item.Flags,
+                Icon = item.Icon,
+                Level = item.Level,
+                Name = item.Name,
+                Rarity = item.Rarity,
+                Type = item.Type,
+                UnitSellPrice = unitSellPrice,
+                VendorValue = item.VendorValue,
+            };
         }
         public Gw2Recipe? GetRecipe(int id)
         {

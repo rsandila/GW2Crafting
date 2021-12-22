@@ -8,10 +8,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace GW2Crafting.Pages
 {
+    public class CharacterInformation
+    {
+        public string? Name { get; set; }
+        public int Level { get; set; }
+        public string? Profession { get; set; }
+    }
     public class CharacterSelectionModel : PageModel
     {
         [BindProperty]
-        public IEnumerable<string>? Characters { get; set; }
+        public IEnumerable<CharacterInformation>? Characters { get; set; }
         [BindProperty]
         public string SelectedCharacter { get; set; } = string.Empty;
         private readonly ILogger<CharacterSelectionModel> _logger;
@@ -32,7 +38,7 @@ namespace GW2Crafting.Pages
                     SessionId.ResetSession(HttpContext);
                     return RedirectToPage("Index");
                 }
-                Characters = characters.Select(w => w.Name).ToList();
+                Characters = characters.Select(w => new CharacterInformation { Name = w.Name, Level = w.Level, Profession = w.Profession }).ToList();
                 return Page();
             }
             else

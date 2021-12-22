@@ -14,7 +14,7 @@ public class IndexModel : PageModel
     private readonly Gw2TokenCache _tokenCache;
 
     [BindProperty]
-    public MainListSelection Selection { get; set; } = new MainListSelection { ListType = MainListType.Inventory };
+    public MainListSelection Selection { get; set; } = new MainListSelection { ListType = MainListType.Recipes };
     [BindProperty]
     public string AccessToken { get; set; } = "";
 
@@ -47,18 +47,14 @@ public class IndexModel : PageModel
 
         _tokenCache.Add(id, CacheTypeId.AccessToken, AccessToken);
         _tokenCache.Add(id, CacheTypeId.ListType, Selection);
-        switch (Selection.ListType)
+        return Selection.ListType switch
         {
-            case MainListType.Inventory:
-                return RedirectToPage("CharacterSelection");
-            case MainListType.Recipes:
-                return RedirectToPage("CharacterSelection");
-            case MainListType.Bank:
-                return RedirectToPage("Bank");
-            case MainListType.Material:
-                return RedirectToPage("Material");
-            default:
-                return Page();
-        }
+            MainListType.Inventory => RedirectToPage("CharacterSelection"),
+            MainListType.Recipes => RedirectToPage("CharacterSelection"),
+            MainListType.Bank => RedirectToPage("Bank"),
+            MainListType.Material => RedirectToPage("Material"),
+            MainListType.Wallet => RedirectToPage("Wallet"),
+            _ => Page(),
+        };
     }
 }

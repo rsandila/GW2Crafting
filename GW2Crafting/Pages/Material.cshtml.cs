@@ -15,15 +15,15 @@ namespace GW2Crafting.Pages
         public long Count { get; set; }
         public long UnitSellPrice { get; set; }
     }
-    public class BankModel : PageModel
+    public class MaterialModel : PageModel
     {
-        private readonly ILogger<BankModel> _logger;
+        private readonly ILogger<MaterialModel> _logger;
         private readonly Gw2TokenCache _tokenCache;
         private readonly Gw2Database _database;
         [BindProperty]
         public List<MaterialItem> Items { get; }
 
-        public BankModel(ILogger<BankModel> logger, Gw2TokenCache tokenCache, Gw2Database db)
+        public MaterialModel(ILogger<MaterialModel> logger, Gw2TokenCache tokenCache, Gw2Database db)
         {
             _logger = logger;
             _tokenCache = tokenCache;
@@ -56,13 +56,13 @@ namespace GW2Crafting.Pages
                 SessionId.ResetSession(HttpContext);
                 return RedirectToPage("Index");
             }
-            var listings = Listings.GetListingsFor(_tokenCache, id, material.Select(x => x.Id));
+            var listings = Listings.GetListingsFor(_tokenCache, material.Select(x => x.Id));
             if (!listings.Any())
             {
                 SessionId.ResetSession(HttpContext);
                 return RedirectToPage("Index");
             }
-            var listingDict = listings.ToDictionary(x => x.Id, x => x.Buys.OrderByDescending(w => w.UnitPrice).FirstOrDefault());
+            var listingDict = listings.ToDictionary(x => x.Id, x => x.Sells.OrderBy(w => w.UnitPrice).FirstOrDefault());
             foreach (var item in material)
             {
                 var resolvedItem = _database.GetItem(item.Id);

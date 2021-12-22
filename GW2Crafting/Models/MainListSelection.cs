@@ -5,7 +5,8 @@
         Inventory,
         Recipes,
         Bank,
-        Material
+        Material,
+        Wallet
     }
     public class MainListSelection
     {

@@ -5,29 +5,27 @@
 }
 
 <div class="text-center">
-    <h1 class="display-8">Welcome</h1>
-    <p>Guild Wars 2 Crafting - Character Selection</p>    
+    <h1>Guild Wars 2 Crafting - @ViewData["Title"]</h1>    
 </div>
-<div>
-    <a asp-page="Index">Login as another user</a>
-</div>
-<div>
-<form method="post">
-    <table>
-    <tr><td>Select character:</td></tr>
-   @foreach (var name in Model.Characters)
-   {
-       <tr>
-           <td>
-            <input name="SelectedCharacter" type="radio" value="@name" checked="@(Model.SelectedCharacter.Equals(name))"/>
-            @name
-        </td>
-       </tr>
-   }
-   <tr><td></td></tr>
-    <tr>
-        <td><input type="submit"/></td>
-    </tr>
-   </table>
-</form>
+<div class="container-fluid" id="app">
+    <div class="m-5 row">
+        <a asp-page="Index">Login as another user</a>
+    </div>
+    <div class="row">
+        <form method="post">
+            <div class="container-fluid">
+            @foreach (var character in Model.Characters)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" value="@character.Name" checked="@(Model.SelectedCharacter.Equals(character.Name))" name="SelectedCharacter" id="@character.Name"/>
+                    <label class="form-check-label" for="@character.Name">@character.Name (Level @character.Level @character.Profession)</label>
+                </div>
+            }
+            </div>
+            <div class="row justify-content-end">
+                <div class="col-4"></div>
+                <div class="col-1"><input class="btn btn-primary" type="submit"/></div>
+            </div>
+        </form>
+    </div>
 </div>

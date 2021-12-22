@@ -16,12 +16,7 @@
             <td>Output Name</td>
             <td>Listing Sell Price</td>
             <td>Listing Ingredients Price</td>
-            <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Output Description</td>
-            <td>Output Type</td>
-            <td>Output Level</td>
-            <td>Output Rarity</td>
-            <td>Output Vendor Value</td>
-            <td>Output Flags</td>
+            <td>Possible Profit</td>
             <td>Disciplines</td>
             <td>Minimum Rating</td>
             <td>Items Created</td>
@@ -32,15 +27,14 @@
     <tr>
         <td><img src=@item.OutputItem.Icon widht=32 height=32/></td>
         <td><a href="https://api.guildwars2.com/v2/items/@item.OutputItem.Id" target="_blank">@item.OutputItem.Id</a></td>
-        <td>@item.OutputItem.Name</td>
+        <td>
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Description: @item.OutputItem.Description, Type: @item.OutputItem.Type, Level: @item.OutputItem.Level, Rarity: @item.OutputItem.Rarity, Vendor Value: @GW2Crafting.Common.Listings.DisplayablePrice(item.OutputItem.VendorValue) Flags: @string.Join(",",item.OutputItem.Flags)">
+                <a asp-page="RecipeDetails" asp-route-id=@item.Original.Id>@item.OutputItem.Name</a>
+            </span>
+        </td>
         <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingSellPrice)</td>
         <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingIngredientsPrice)</td>
-        <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">@item.OutputItem.Description</td>
-        <td>@item.OutputItem.Type</td>
-        <td>@item.OutputItem.Level</td>
-        <td>@item.OutputItem.Rarity</td>
-        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.OutputItem.VendorValue)</td>
-        <td>@string.Join(",",item.OutputItem.Flags)</td>
+        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingSellPrice-item.ListingIngredientsPrice)
         <td>@string.Join(",",item.Original.CraftingDisciplines)</td>
         <td>@item.Original.MinRating</td>
         <td>@item.Original.OutputItemCount</td>
