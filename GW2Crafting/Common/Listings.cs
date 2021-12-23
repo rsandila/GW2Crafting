@@ -80,7 +80,7 @@ namespace GW2Crafting.Common
             {
                 if (apiListings.ContainsKey(listingId))
                 {
-                    if (apiListings[listingId].GetSellingUnitPrice(0, 1) >= _listings[listingId])
+                    if (apiListings[listingId].GetSellingUnitPrice(0, 1) < _listings[listingId])
                     {
                         continue;
                     }

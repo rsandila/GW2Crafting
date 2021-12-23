@@ -11,7 +11,36 @@ namespace GW2Crafting.Pages
 {
     public class MaterialItem: Gw2Item
     {
-        public string? CategoryName { get; set; }
+        internal MaterialItem(Item original, string categoryName, long count, long unitSellPrice) : base(original)
+        {
+            CategoryName = categoryName;
+            Count = count;
+            UnitSellPrice = unitSellPrice;
+        }
+        internal MaterialItem(MaterialItem original)
+        {
+            CategoryName = original.CategoryName;
+            Count = original.Count;
+            UnitSellPrice = original.UnitSellPrice;
+            Id = original.Id;
+            Name = original.Name;
+            Description = original.Description ?? String.Empty;
+            Type = original.Type;
+            Level = original.Level;
+            Rarity = original.Rarity;
+            VendorValue = original.VendorValue;
+            Flags = original.Flags?.Select(w => w).ToList() ?? Array.Empty<ItemFlag>().ToList();
+            Icon = original.Icon;
+        }
+
+        public MaterialItem(Gw2Item original, string categoryName, int count, int unitSellPrice) : base(original)
+        {
+            CategoryName = categoryName;
+            Count = count;
+            UnitSellPrice = unitSellPrice;
+        }
+
+        public string CategoryName { get; set; }
         public long Count { get; set; }
         public long UnitSellPrice { get; set; }
     }
@@ -80,7 +109,7 @@ namespace GW2Crafting.Pages
                 {
                     unitSellPrice = listing.UnitPrice;
                 }
-                Items.Add(new MaterialItem
+                Items.Add(new MaterialItem(resolvedItem, categoryName, item.Count, unitSellPrice)
                 {
                     Id = item.Id,
                     CategoryName = categoryName,

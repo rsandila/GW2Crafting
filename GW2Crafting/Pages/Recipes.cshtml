@@ -15,14 +15,24 @@
             <td>Output Id</td>
             <td>Output Name</td>
             <td>Listing Sell Price</td>
-            <td>Listing Ingredients Price</td>
-            <td>Possible Profit</td>
+            <td>Listing Buy Price</td>
+            <td>Ingredients Price</td>
+            <td>
+                <a asp-page="./Recipes" asp-route-sortOrder="sell">
+                    Possible Profit Buy Listing
+                </a>
+            </td>
+            <td>
+                <a asp-page="./Recipes" asp-route-sortOrder="buy">
+                    Possible Profit Sell Immediately
+                </a>
+             </td>
             <td>Disciplines</td>
             <td>Minimum Rating</td>
             <td>Items Created</td>
         </tr>
      </thead>
-    @foreach (var item in Model.Recipes.OrderByDescending(w => w.ListingSellPrice - w.ListingIngredientsPrice))
+    @foreach (var item in Model.Recipes)
     {
     <tr>
         <td><img src=@item.OutputItem.Icon widht=32 height=32/></td>
@@ -33,8 +43,10 @@
             </span>
         </td>
         <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingSellPrice)</td>
+        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingBuyPrice)</td>
         <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingIngredientsPrice)</td>
         <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingSellPrice-item.ListingIngredientsPrice)
+        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingBuyPrice-item.ListingIngredientsPrice)
         <td>@string.Join(",",item.Original.CraftingDisciplines)</td>
         <td>@item.Original.MinRating</td>
         <td>@item.Original.OutputItemCount</td>

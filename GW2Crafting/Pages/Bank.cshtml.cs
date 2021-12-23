@@ -1,24 +1,40 @@
 using GW2Crafting.Caching;
 using GW2Crafting.Common;
 using Gw2Sharp;
+using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace GW2Crafting.Pages
 {
+    public class BankItem : MaterialItem
+    {
+        internal BankItem(MaterialItem item, long unitBuyPrice, int charges, string? binding, string? boundTo) : base(item)
+        {
+            Charges = charges;
+            Binding = binding;
+            BoundTo = boundTo;
+            BuyUnitPrice = unitBuyPrice;
+        }
+
+        public int Charges { get; set; }
+        public string? Binding { get; set; }
+        public string? BoundTo { get; set; }
+        public long BuyUnitPrice { get; set; }
+    }
     public class BankModel : PageModel
     {
         private readonly ILogger<BankModel> _logger;
         private readonly Gw2TokenCache _tokenCache;
         private readonly Gw2Database _database;
         [BindProperty]
-        public IEnumerable<MaterialItem> Items { get; set; }
+        public List<BankItem> Items { get; set; }
         public BankModel(ILogger<BankModel> logger, Gw2TokenCache tokenCache, Gw2Database db)
         {
             _logger = logger;
             _tokenCache = tokenCache;
             _database = db;
-            Items = new List<MaterialItem>();
+            Items = new List<BankItem>();
         }
         public async Task<IActionResult> OnGetAsync()
         {
@@ -39,7 +55,17 @@ namespace GW2Crafting.Pages
                 SessionId.ResetSession(HttpContext);
                 return RedirectToPage("Index");
             }
-            // TODO
+            await Listings.CacheListingsFor(_tokenCache, id, bankBlob.Select(w => w.Id));
+            // TODO - get buy price
+            foreach (var item in bankBlob)
+            {
+                var resolvedItem = _database.GetMaterialItem(item.Id, item.Count, item.Count, string.Empty);
+                if (resolvedItem != null)
+                {
+                    Items.Add(new BankItem(resolvedItem, 0 /* TODO unit Buy price */, item.Charges.GetValueOrDefault(0), item.Binding ?? string.Empty, item.BoundTo));
+                }
+            }
+            return Page();
         }
     }
 }

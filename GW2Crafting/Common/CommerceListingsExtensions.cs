@@ -12,7 +12,38 @@ namespace GW2Crafting.Common
             }
             return listings.FirstOrDefault()?.GetSellingUnitPrice(defaultValue, 1) ?? defaultValue;
         }
+        public static int GetBuyingUnitPrice(this IEnumerable<CommerceListings> listings, int defaultValue = 0)
+        {
+            if (listings == null)
+            {
+                return 0;
+            }
+            return listings.FirstOrDefault()?.GetBuyingUnitPrice(defaultValue, 1) ?? defaultValue;
+        }
         public static int GetSellingUnitPrice(this CommerceListings listings, int defaultValue, int numberOfItems)
+        {
+            if (!(listings?.Sells?.Any() ?? false))
+            {
+                return defaultValue;
+            }
+            int total = 0;
+            int required = numberOfItems;
+            foreach (var item in listings.Sells.OrderBy(w => w.UnitPrice))
+            {
+                if (item.Quantity >= required)
+                {
+                    total += item.UnitPrice * required;
+                    break;
+                }
+                else
+                {
+                    total += item.UnitPrice * item.Quantity;
+                    required -= item.Quantity;
+                }
+            }
+            return total;
+        }
+        public static int GetBuyingUnitPrice(this CommerceListings listings, int defaultValue, int numberOfItems)
         {
             if (!(listings?.Buys?.Any() ?? false))
             {

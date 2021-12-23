@@ -1,6 +1,9 @@
 ﻿
+using GW2Crafting.Common;
+using GW2Crafting.Pages;
 using Gw2Sharp;
 using Gw2Sharp.WebApi.Exceptions;
+using Gw2Sharp.WebApi.V2;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -126,6 +129,42 @@ namespace GW2Crafting.Caching
                 return default;
             }
             
+        }
+        internal async Task<IEnumerable<Gw2ResolvedRecipe>> GetResolvedRecipies(Gw2Database _database, Guid id, string characterName)
+        {
+            var key = $"{id}_{characterName}";
+            if (cache.TryGetValue(key, out IEnumerable<Gw2ResolvedRecipe> recipies) && recipies.Any())
+            {
+                return recipies;
+            }
+            var client = await Get<Gw2Client>(id, CacheTypeId.Client);
+            if (client == null)
+            {
+                return Array.Empty<Gw2ResolvedRecipe>();
+            }
+            var characters = await Get<IApiV2ObjectList<Character>>(id, CacheTypeId.Characters);
+            if (characters == null)
+            {
+                return Array.Empty<Gw2ResolvedRecipe>();
+            }
+            var character = characters.FirstOrDefault(w => w.Name == characterName);
+            if (character == null || character.Recipes == null)
+            {
+                return Array.Empty<Gw2ResolvedRecipe>();
+            }
+            var resolvedRecipies = character.Recipes.Select(w => _database.GetRecipe(w));
+            await Listings.CacheListingsFor(this, id, resolvedRecipies.Select(w => w?.OutputItemId ?? 0));
+            await Listings.CacheListingsFor(this, id, resolvedRecipies.SelectMany(w => w?.Ingredients?.Select(q => q.Id) ?? Array.Empty<int>()));
+            var localRecipies = new List<Gw2ResolvedRecipe>();
+            foreach (var item in resolvedRecipies)
+            {
+                if (item != null)
+                {
+                    localRecipies.Add(new Gw2ResolvedRecipe(item, _database, this));
+                }
+            }
+            cache.Set(key, localRecipies);
+            return localRecipies;
         }
         internal ICollection<CommerceListings> GetListingsFor(IEnumerable<int> listingIds)
         {

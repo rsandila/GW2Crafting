@@ -76,21 +76,7 @@ namespace GW2Crafting.Caching
             {
                 return null;
             }
-            return new MaterialItem
-            {
-                Id = item.Id,
-                CategoryName = categoryName,
-                Count = quantity,
-                Description = item.Description,
-                Flags = item.Flags,
-                Icon = item.Icon,
-                Level = item.Level,
-                Name = item.Name,
-                Rarity = item.Rarity,
-                Type = item.Type,
-                UnitSellPrice = unitSellPrice,
-                VendorValue = item.VendorValue,
-            };
+            return new MaterialItem(item, categoryName, quantity, unitSellPrice);
         }
         public Gw2Recipe? GetRecipe(int id)
         {

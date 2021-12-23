@@ -18,6 +18,18 @@ namespace GW2Crafting.Caching.Models
             Flags = original.Flags.Select(w => w.Value).ToList();
             Icon = original.Icon.Url;
         }        
+        internal Gw2Item(Gw2Item original)
+        {
+            Id = original.Id;
+            Name = original.Name;
+            Description = original.Description ?? String.Empty;
+            Type = original.Type;
+            Level = original.Level;
+            Rarity = original.Rarity;
+            VendorValue = original.VendorValue;
+            Flags = original.Flags?.Select(w => w).ToList() ?? Array.Empty<ItemFlag>().ToList();
+            Icon = original.Icon;
+        }
         public int Id { get; set; }
         public string? Name { get; set; }   
         public string? Description { get; set; }
