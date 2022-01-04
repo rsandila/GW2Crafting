@@ -98,6 +98,8 @@
                     </div>
                     <div class="col">Type: @item.Type</div>
                     <div class="col">Quantity: @item.Count</div>
+                    <div class="col">Immediate Buy: @GW2Crafting.Common.Listings.DisplayablePrice((int)item.UnitSellPrice)</div>
+                    <div class="col">Listing Buy: @GW2Crafting.Common.Listings.DisplayablePrice((int)item.UnitBuyPrice)</div>
                 </div>
               }
           </div>

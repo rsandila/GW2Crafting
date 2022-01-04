@@ -55,14 +55,15 @@ namespace GW2Crafting.Pages
                 SessionId.ResetSession(HttpContext);
                 return RedirectToPage("Index");
             }
-            await Listings.CacheListingsFor(_tokenCache, id, bankBlob.Select(w => w.Id));
-            // TODO - get buy price
-            foreach (var item in bankBlob)
+            await Listings.CacheListingsFor(_tokenCache, id, bankBlob.Where(w => w != null).Select(w => w.Id));
+            foreach (var item in bankBlob.Where(w => w != null))
             {
-                var resolvedItem = _database.GetMaterialItem(item.Id, item.Count, item.Count, string.Empty);
+                var listing = Listings.GetListingsFor(_tokenCache, new[] { item.Id });
+                var resolvedItem = _database.GetMaterialItem(item.Id, item.Count, listing.GetSellingUnitPrice(), listing.GetBuyingUnitPrice(), string.Empty);
                 if (resolvedItem != null)
                 {
-                    Items.Add(new BankItem(resolvedItem, 0 /* TODO unit Buy price */, item.Charges.GetValueOrDefault(0), item.Binding ?? string.Empty, item.BoundTo));
+                    var buyPrice = Listings.GetListingsFor(_tokenCache, new[] { resolvedItem.Id }).GetBuyingUnitPrice();
+                    Items.Add(new BankItem(resolvedItem, buyPrice, item.Charges.GetValueOrDefault(0), item.Binding ?? string.Empty, item.BoundTo));
                 }
             }
             return Page();

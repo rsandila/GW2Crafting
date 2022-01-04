@@ -19,17 +19,17 @@ namespace GW2Crafting.Pages
             {
                 throw new InvalidDataException("recipe.Ingredients can not be null");
             }
-            Ingredients = recipe.Ingredients.Select(w => _database.GetMaterialItem(w.Id, w.Count, 0, String.Empty));
             var outputItemPrice = Listings.GetListingsFor(_tokenCache, new[] { Original.OutputItemId });
-            var ingredientPrices = Listings.GetListingsFor(_tokenCache, recipe.Ingredients.Select(w => w.Id));
+            var ingredientPrices = Listings.GetListingsFor(_tokenCache, recipe.Ingredients.Select(w => w.Id)).ToDictionary(w => w.Id, w => w);
+            Ingredients = recipe.Ingredients.Select(w => _database.GetMaterialItem(w.Id, w.Count, ingredientPrices.TryGetValue(w.Id, out var entry) ? entry.GetSellingUnitPrice(1000000, w.Count) : 0, entry?.GetBuyingUnitPrice(1000000, w.Count) ?? 0, String.Empty));
             ListingSellPrice = outputItemPrice.GetSellingUnitPrice(0);
             ListingBuyPrice = outputItemPrice.GetBuyingUnitPrice(0);
             ListingIngredientsPrice = 0;
-            if (ingredientPrices.Count() != recipe.Ingredients.Count())
+            if (ingredientPrices.Values.Count() != recipe.Ingredients.Count())
             {
                 ListingIngredientsPrice = 1000000;
             }
-            foreach (var item in ingredientPrices)
+            foreach (var item in ingredientPrices.Values)
             {
                 var ingredientCount = recipe.Ingredients?.FirstOrDefault(w => w.Id == item.Id)?.Count ?? 1000000;
                 ListingIngredientsPrice += item.GetSellingUnitPrice(1000000, ingredientCount);

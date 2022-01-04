@@ -11,11 +11,12 @@ namespace GW2Crafting.Pages
 {
     public class MaterialItem: Gw2Item
     {
-        internal MaterialItem(Item original, string categoryName, long count, long unitSellPrice) : base(original)
+        internal MaterialItem(Item original, string categoryName, long count, long unitSellPrice, long unitBuyPrice) : base(original)
         {
             CategoryName = categoryName;
             Count = count;
             UnitSellPrice = unitSellPrice;
+            UnitBuyPrice = unitBuyPrice;
         }
         internal MaterialItem(MaterialItem original)
         {
@@ -31,18 +32,21 @@ namespace GW2Crafting.Pages
             VendorValue = original.VendorValue;
             Flags = original.Flags?.Select(w => w).ToList() ?? Array.Empty<ItemFlag>().ToList();
             Icon = original.Icon;
+            UnitBuyPrice = original.UnitBuyPrice;
         }
 
-        public MaterialItem(Gw2Item original, string categoryName, int count, int unitSellPrice) : base(original)
+        public MaterialItem(Gw2Item original, string categoryName, int count, int unitSellPrice, int unitBuyPrice) : base(original)
         {
             CategoryName = categoryName;
             Count = count;
             UnitSellPrice = unitSellPrice;
+            UnitBuyPrice= unitBuyPrice;
         }
 
         public string CategoryName { get; set; }
         public long Count { get; set; }
         public long UnitSellPrice { get; set; }
+        public long UnitBuyPrice { get; set; }
     }
     public class MaterialModel : PageModel
     {
@@ -104,26 +108,7 @@ namespace GW2Crafting.Pages
                 {
                     categoryName = category.Name;
                 }
-                var unitSellPrice = 0;
-                if (listingDict.TryGetValue(item.Id, out var listing) && listing != null)
-                {
-                    unitSellPrice = listing.UnitPrice;
-                }
-                Items.Add(new MaterialItem(resolvedItem, categoryName, item.Count, unitSellPrice)
-                {
-                    Id = item.Id,
-                    CategoryName = categoryName,
-                    Count = item.Count,
-                    Description = resolvedItem.Description,
-                    Flags = resolvedItem.Flags,
-                    Icon = resolvedItem.Icon,
-                    Level = resolvedItem.Level,
-                    Name = resolvedItem.Name,
-                    Rarity = resolvedItem.Rarity,
-                    Type = resolvedItem.Type,
-                    VendorValue = resolvedItem.VendorValue,
-                    UnitSellPrice = unitSellPrice
-                });
+                Items.Add(new MaterialItem(resolvedItem, categoryName, item.Count, listings.GetSellingUnitPrice(0), listings.GetBuyingUnitPrice(0)));
             }
             return Page();
         }

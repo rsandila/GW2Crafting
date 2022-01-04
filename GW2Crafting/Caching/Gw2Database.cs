@@ -49,11 +49,28 @@ namespace GW2Crafting.Caching
                     colRecipes.InsertBulk(newRecipyContents.Select(w => new Gw2Recipe(w)));
                 }
             }
+            var currencyIds = await client.WebApi.V2.Currencies.IdsAsync();
+            if (currencyIds == null)
+            {
+                return;
+            }
+            var colCurrencies = db.GetCollection<Gw2Currency>("Currencies");
+            var existingCurrencies = colCurrencies.Query().Select(w => w.Id).ToList();
+            var newCurrencies = currencyIds.ToList().Except(existingCurrencies).ToList();
+            if (newCurrencies.Any())
+            {
+                var newCurrencyContents = await client.WebApi.V2.Currencies.ManyAsync(newCurrencies);
+                if (newCurrencyContents.Any())
+                {
+                    colCurrencies.InsertBulk(newCurrencyContents.Select(w => new Gw2Currency(w)));
+                }
+            }
         }
 
         private readonly LiteDatabase _db;
         private readonly ILiteCollection<Gw2Item> _items;
         private readonly ILiteCollection<Gw2Recipe> _recipes;
+        private readonly ILiteCollection<Gw2Currency> _currencies;
         private bool disposedValue;
 
         public Gw2Database()
@@ -61,22 +78,28 @@ namespace GW2Crafting.Caching
             _db = new LiteDatabase("Gw2Crafting.db");
             _items = _db.GetCollection<Gw2Item>("Items");
             _recipes = _db.GetCollection<Gw2Recipe>("Recipies");
+            _currencies = _db.GetCollection<Gw2Currency>("Currencies");
             _items.EnsureIndex(x => x.Id);
             _recipes.EnsureIndex(x => x.Id);
+            _currencies.EnsureIndex(x => x.Id);
         }
 
         public Gw2Item? GetItem(int id)
         {
             return _items.Query().Where(w => w.Id == id).FirstOrDefault();
         }
-        public MaterialItem? GetMaterialItem(int id, int quantity, int unitSellPrice, string categoryName)
+        public Gw2Currency GetCurrencyItem(int id)
+        {
+            return _currencies.Query().Where(w => w.Id == id).FirstOrDefault();
+        }
+        public MaterialItem? GetMaterialItem(int id, int quantity, int unitSellPrice, int unitBuyPrice, string categoryName)
         {
             var item = GetItem(id);
             if (item == null)
             {
                 return null;
             }
-            return new MaterialItem(item, categoryName, quantity, unitSellPrice);
+            return new MaterialItem(item, categoryName, quantity, unitSellPrice, unitBuyPrice);
         }
         public Gw2Recipe? GetRecipe(int id)
         {

@@ -1,7 +1,7 @@
 ﻿@page
-@model GW2Crafting.Pages.BankModel
+@model GW2Crafting.Pages.WalletModel
 @{
-    ViewData["Title"] = "Guild Wars 2 Crafting - Bank";
+    ViewData["Title"] = "Guild Wars 2 Crafting - Wallet";
 }
 <div class="text-center">
     <h3 class="display-8">@ViewData["title"]</h3>
@@ -14,12 +14,7 @@
             <td></td>
             <td>Id</td>
             <td>Name</td>
-            <td>Charges</td>
             <td>Count</td>
-            <td>Buy Unit Price</td>
-            <td>Sell Unit Price</td>
-            <td>Binding</td>
-            <td>Bound To</td>
             <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Description</td>
             <td>Type</td>
             <td>Level</td>
@@ -28,24 +23,22 @@
             <td>Flags</td>
         </tr>
      </thead>
-     @foreach (var item in Model.Items.Where(w => w.Count > 0).OrderByDescending(w => w.UnitSellPrice))
+     @foreach (var item in Model.Items)
         {
             <tr>
                 <td><img src=@item.Icon widht=32 height=32/></td>
                 <td><a href="https://api.guildwars2.com/v2/items/@item.Id" target="_blank">@item.Id</a></td>
                 <td>@item.Name</td>
-                <td>@item.Charges</td>
-                <td>@item.Count</td>
-                <td>@item.BuyUnitPrice</td>
-                <td>@item.UnitSellPrice</td>
-                <td>@item.Binding</td>
-                <td>@item.BoundTo</td>
+                @{
+                    if (item.Id == 1) { 
+                        <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.Value)</td>
+                    }
+                    else
+                    {
+                        <td>@item.Value</td>
+                    }
+                }
                 <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">@item.Description</td>
-                <td>@item.Type</td>
-                <td>@item.Level</td>
-                <td>@item.Rarity</td>
-                <td>@item.VendorValue</td>
-                <td>@string.Join(",",item.Flags)</td>
             </tr>
         }
     </table>
