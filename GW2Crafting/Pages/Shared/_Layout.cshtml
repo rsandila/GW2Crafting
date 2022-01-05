@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using GW2Crafting.Models
+@inject GW2Crafting.Caching.Gw2TokenCache _tokenCache;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -22,7 +25,49 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
                         </li>
-                        <li class="nav-item">
+                        @if (IndexModel.IsLoggedIn(Context))
+                        {
+                            var characters = await CharacterSelectionModel.GetCharacterInformation(Context, _tokenCache);
+                            if (characters.Any())
+                            {
+                             <li>
+                               <div class="dropdown">
+                                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown">Character Selection</a>
+                                   <ul class="dropdown-menu">
+                                       @foreach (var character in characters)
+                                        {
+                                                var localRef = $"/CharacterSelection?SelectedCharacter={Uri.EscapeDataString(character.Name)}&returnTo={Context.Request.Path.ToUriComponent()}";
+                                                <li><a class="dropdown-item" href=@localRef>@character.Name (Level @character.Level @character.Profession)</a></li>                                                
+                                        }
+                                   </ul>
+                               </div> 
+                            </li>                                
+                            }
+                            @if (!string.IsNullOrWhiteSpace(IndexModel.SelectedCharacter(Context, _tokenCache)))
+                            {
+                            <li>
+                               <div class="dropdown">
+                                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAction" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown">Collection</a>
+                                   <ul class="dropdown-menu">
+                                       @foreach (var action in Enum.GetValues<MainListType>().Cast<MainListType>())
+                                        {
+                                            var localRef = $"/{action}";
+                                            <li><a class="dropdown-item" href=@localRef>@action</a></li>                                                
+                                        }
+                                   </ul>
+                               </div> 
+                            </li>                                                                
+                            }
+                        }
+                    </ul>
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (IndexModel.IsLoggedIn(Context))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Logout">Account: @IndexModel.GetAccountName(Context, _tokenCache)</a>
+                            </li>                            
+                        }
+                        <li class="nav-item  ml-auto">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                     </ul>

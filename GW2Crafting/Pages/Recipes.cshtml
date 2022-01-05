@@ -1,13 +1,12 @@
 ﻿@page
 @model GW2Crafting.Pages.RecipesModel
 @{
-    ViewData["Title"] = $"Guild Wars 2 Crafting - Known Recipes for {Model.CharacterName}";
+    ViewData["Title"] = $"Known Recipes: {Model.CharacterName}";
 }
 <div class="text-center">
     <h3 class="display-8">@ViewData["title"]</h3>
 </div>
-<div id="app-2">
-  <a asp-page="Index">Select another action</a>
+<div id="app">
   <table class="table">
      <thead class="thead-light">
         <tr>

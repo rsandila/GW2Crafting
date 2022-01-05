@@ -18,7 +18,8 @@ namespace GW2Crafting.Caching
         SelectedCharacter,
         Client,
         MaterialCategories,
-        Materials
+        Materials,
+        Account
     }
     public class Gw2TokenCache
     {
@@ -44,6 +45,23 @@ namespace GW2Crafting.Caching
             {
                 switch (type)
                 {
+                    case CacheTypeId.Account:
+                        {
+                            var client = await Get<Gw2Client>(id, CacheTypeId.Client);
+                            if (client == null)
+                            {
+                                return default;
+                            }
+                            var webApiClient = client.WebApi.V2;
+                            var accountValue = await webApiClient.Account.GetAsync();
+                            if (accountValue == null)
+                            {
+                                return default;
+                            }
+                            cache.Set(CalculateId(id, type), accountValue, CalculateExpiration);
+                            return accountValue as T;
+                        }
+                        break;
                     case CacheTypeId.Client:
                         {
                             var connection = await Get<Connection>(id, CacheTypeId.Connection);
@@ -52,6 +70,11 @@ namespace GW2Crafting.Caching
                                 return default;
                             }
                             var client = new Gw2Client(connection) as T;
+                            if (client == null)
+                            {
+                                return default;
+                            }
+                            cache.Set(CalculateId(id, type), client, CalculateExpiration);
                             return client;
                         }
 

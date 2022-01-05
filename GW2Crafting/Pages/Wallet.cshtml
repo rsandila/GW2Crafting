@@ -1,13 +1,12 @@
 ﻿@page
 @model GW2Crafting.Pages.WalletModel
 @{
-    ViewData["Title"] = "Guild Wars 2 Crafting - Wallet";
+    ViewData["Title"] = "Wallet";
 }
 <div class="text-center">
     <h3 class="display-8">@ViewData["title"]</h3>
 </div>
 <div id="app-2">
-  <a asp-page="Index">Select another action</a>
   <table class="table">
      <thead class="thead-light">
         <tr>
@@ -16,11 +15,6 @@
             <td>Name</td>
             <td>Count</td>
             <td class="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Description</td>
-            <td>Type</td>
-            <td>Level</td>
-            <td>Rarity</td>
-            <td>Vendor Value</td>
-            <td>Flags</td>
         </tr>
      </thead>
      @foreach (var item in Model.Items)

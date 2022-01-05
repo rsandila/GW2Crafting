@@ -18,7 +18,7 @@ namespace GW2Crafting.Pages
     {
         [BindProperty]
         public IEnumerable<CharacterInformation>? Characters { get; set; }
-        [BindProperty]
+        [BindProperty(SupportsGet = true)]
         public string SelectedCharacter { get; set; } = string.Empty;
         private readonly ILogger<CharacterSelectionModel> _logger;
         private readonly Gw2TokenCache _tokenCache;
@@ -27,27 +27,48 @@ namespace GW2Crafting.Pages
             _logger = logger;
             _tokenCache = tokenCache;
         }
+        /*
         public async Task<IActionResult> OnGetAsync()
         {
-            var id = SessionId.GetSessionId(HttpContext);
-            if (id != Guid.Empty)
+            Characters = await GetCharacterInformation(HttpContext, _tokenCache);
+            if (!Characters.Any())
             {
-                var characters = await _tokenCache.Get<IApiV2ObjectList<Character>>(id, CacheTypeId.Characters);
-                if (characters == null)
-                {
-                    SessionId.ResetSession(HttpContext);
-                    return RedirectToPage("Index");
-                }
-                Characters = characters.Select(w => new CharacterInformation { Name = w.Name, Level = w.Level, Profession = w.Profession }).ToList();
-                return Page();
-            }
-            else
-            {
+                _logger.LogError("No characters found in account");
                 SessionId.ResetSession(HttpContext);
                 return RedirectToPage("Index");
             }
+            return Page();
         }
-
+        */
+        public async Task<IActionResult> OnGetAsync(string selectedCharacter, string returnTo)
+        {
+            Characters = await GetCharacterInformation(HttpContext, _tokenCache);
+            if (!Characters.Any())
+            {
+                _logger.LogError("No characters found in account");
+                SessionId.ResetSession(HttpContext);
+                return RedirectToPage("Index");
+            }
+            if (!string.IsNullOrWhiteSpace(selectedCharacter) && !Characters.Any(w => w.Name != null && w.Name.Equals(selectedCharacter, StringComparison.OrdinalIgnoreCase)))
+            {
+                _logger.LogError($"Character {selectedCharacter} found in account");
+                return RedirectToPage("Index");
+            }
+            if (!string.IsNullOrWhiteSpace(selectedCharacter))
+            {
+                SelectedCharacter = selectedCharacter;
+                _tokenCache.Add(SessionId.GetSessionId(HttpContext), CacheTypeId.SelectedCharacter, SelectedCharacter);
+            }
+            else
+            {
+                SelectedCharacter = (await _tokenCache.Get<string>(SessionId.GetSessionId(HttpContext), CacheTypeId.SelectedCharacter)) ?? string.Empty;
+            }
+            if (string.IsNullOrWhiteSpace(returnTo) || new Uri(returnTo, UriKind.RelativeOrAbsolute).IsAbsoluteUri)
+            {
+                return Page();
+            }
+            return Redirect(returnTo);
+        }
         public async Task<IActionResult> OnPostAsync()
         {
             var id = SessionId.GetSessionId(HttpContext);
@@ -70,6 +91,35 @@ namespace GW2Crafting.Pages
             }
             SessionId.ResetSession(HttpContext);
             return RedirectToPage("Index");
+        }
+
+        public static async Task<IEnumerable<CharacterInformation>> GetCharacterInformation(HttpContext context, Gw2TokenCache _tokenCache)
+        {
+            var id = SessionId.GetSessionId(context);
+            if (id != Guid.Empty)
+            {
+                var characters = await _tokenCache.Get<IApiV2ObjectList<Character>>(id, CacheTypeId.Characters);
+                if (characters == null)
+                {
+                    return Array.Empty<CharacterInformation>();
+                }
+                return characters.Select(w => new CharacterInformation { Name = w.Name, Level = w.Level, Profession = w.Profession }).ToList();
+            }
+            return Array.Empty<CharacterInformation>();
+        }
+
+        public static async Task UpdateSelectedCharacter(HttpContext context, Gw2TokenCache _tokenCache, string selectedCharacter)
+        {
+            var id = SessionId.GetSessionId(context);
+            if (id != Guid.Empty)
+            {
+                var listType = await _tokenCache.Get<MainListSelection>(id, CacheTypeId.ListType);
+                if (listType == null)
+                {
+                    return;
+                }
+                _tokenCache.Add(id, CacheTypeId.SelectedCharacter, selectedCharacter);
+            }
         }
     }
 }

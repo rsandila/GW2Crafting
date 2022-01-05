@@ -1,13 +1,12 @@
 ﻿@page
 @model GW2Crafting.Pages.InventoryModel
 @{
-    ViewData["Title"] = $"Guild Wars 2 Crafting - Character Inventory {Model.CharacterName}";
+    ViewData["Title"] = $"Character Inventory: {Model.CharacterName}";
 }
 <div class="text-center">
     <h3 class="display-8">@ViewData["title"]</h3>
 </div>
 <div id="app-2">
-  <a asp-page="CharacterSelection">Select another character</a>
   <table class="table">
      <thead class="thead-light">
         <tr>
