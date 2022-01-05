@@ -5,7 +5,13 @@ namespace GW2Crafting.Caching.Models
 {
     public class Gw2Item
     {
-        public Gw2Item() { }
+        public Gw2Item() 
+        {
+            Name = String.Empty;
+            Description = String.Empty;
+            Icon = new Uri("/", UriKind.Relative);
+            Flags = Array.Empty<ItemFlag>().ToList();
+        }
         internal Gw2Item(Item original)
         {
             Id = original.Id;
@@ -31,14 +37,14 @@ namespace GW2Crafting.Caching.Models
             Icon = original.Icon;
         }
         public int Id { get; set; }
-        public string? Name { get; set; }   
-        public string? Description { get; set; }
+        public string Name { get; set; }   
+        public string Description { get; set; }
         public ItemType Type { get; set; }
         public int Level { get; set; }
         public ItemRarity Rarity { get; set; }
         public int VendorValue { get; set; }
-        public IEnumerable<ItemFlag>? Flags { get; set; }
-        public Uri? Icon { get; set; }
+        public IEnumerable<ItemFlag> Flags { get; set; }
+        public Uri Icon { get; set; }
 
     }
 }

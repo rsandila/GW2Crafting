@@ -10,14 +10,20 @@ namespace GW2Crafting.Pages
 {
     public class CharacterInformation
     {
-        public string? Name { get; set; }
+        public CharacterInformation()
+        {
+            Name = String.Empty;
+            Profession = String.Empty;
+        }
+        public string Name { get; set; }
+
         public int Level { get; set; }
-        public string? Profession { get; set; }
+        public string Profession { get; set; }
     }
     public class CharacterSelectionModel : PageModel
     {
         [BindProperty]
-        public IEnumerable<CharacterInformation>? Characters { get; set; }
+        public IEnumerable<CharacterInformation> Characters { get; set; }
         [BindProperty(SupportsGet = true)]
         public string SelectedCharacter { get; set; } = string.Empty;
         private readonly ILogger<CharacterSelectionModel> _logger;
@@ -26,20 +32,8 @@ namespace GW2Crafting.Pages
         {
             _logger = logger;
             _tokenCache = tokenCache;
+            Characters = Array.Empty<CharacterInformation>();
         }
-        /*
-        public async Task<IActionResult> OnGetAsync()
-        {
-            Characters = await GetCharacterInformation(HttpContext, _tokenCache);
-            if (!Characters.Any())
-            {
-                _logger.LogError("No characters found in account");
-                SessionId.ResetSession(HttpContext);
-                return RedirectToPage("Index");
-            }
-            return Page();
-        }
-        */
         public async Task<IActionResult> OnGetAsync(string selectedCharacter, string returnTo)
         {
             Characters = await GetCharacterInformation(HttpContext, _tokenCache);

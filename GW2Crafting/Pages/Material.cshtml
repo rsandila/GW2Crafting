@@ -1,4 +1,5 @@
 ﻿@page
+@using GW2Crafting.Common
 @model GW2Crafting.Pages.MaterialModel
 @{
     ViewData["Title"] = "Material";
@@ -38,7 +39,7 @@
             <td>@item.Level</td>
             <td>@item.Rarity</td>
             <td>@item.VendorValue</td>
-            <td>@string.Join(",",item.Flags)</td>
+            <td>@item.Flags.EnumToString()</td>
         </tr>
     }
   </table>

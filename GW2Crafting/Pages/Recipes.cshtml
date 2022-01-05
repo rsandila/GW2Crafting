@@ -1,4 +1,5 @@
 ﻿@page
+@using GW2Crafting.Common
 @model GW2Crafting.Pages.RecipesModel
 @{
     ViewData["Title"] = $"Known Recipes: {Model.CharacterName}";
@@ -31,14 +32,14 @@
             <td>Items Created</td>
         </tr>
      </thead>
-    @foreach (var item in Model.Recipes)
+    @foreach (var item in Model.Recipes.Where(w => w != null && w.OutputItem != null))
     {
     <tr>
-        <td><img src=@item.OutputItem.Icon widht=32 height=32/></td>
-        <td><a href="https://api.guildwars2.com/v2/items/@item.OutputItem.Id" target="_blank">@item.OutputItem.Id</a></td>
+        <td><img src=@item.OutputItem?.Icon widht=32 height=32/></td>
+        <td><a href="https://api.guildwars2.com/v2/items/@item.OutputItem?.Id" target="_blank">@item.OutputItem?.Id</a></td>
         <td>
-            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Description: @item.OutputItem.Description, Type: @item.OutputItem.Type, Level: @item.OutputItem.Level, Rarity: @item.OutputItem.Rarity, Vendor Value: @GW2Crafting.Common.Listings.DisplayablePrice(item.OutputItem.VendorValue) Flags: @string.Join(",",item.OutputItem.Flags)">
-                <a asp-page="RecipeDetails" asp-route-id=@item.Original.Id>@item.OutputItem.Name</a>
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Description: @item.OutputItem?.Description, Type: @item.OutputItem?.Type, Level: @item.OutputItem?.Level, Rarity: @item.OutputItem?.Rarity, Vendor Value: @GW2Crafting.Common.Listings.DisplayablePrice(item.OutputItem?.VendorValue ?? 0) Flags: @item.OutputItem?.Flags.EnumToString()">
+                <a asp-page="RecipeDetails" asp-route-id=@item.Original.Id>@item.OutputItem?.Name</a>
             </span>
         </td>
         <td>@GW2Crafting.Common.Listings.DisplayablePrice(item.ListingSellPrice)</td>

@@ -4,7 +4,12 @@ namespace GW2Crafting.Caching.Models
 {
     public class Gw2Currency
     {
-        public Gw2Currency() { }
+        public Gw2Currency() 
+        { 
+            Name = String.Empty;
+            Icon = String.Empty;
+            Description = String.Empty;
+        }
         public Gw2Currency(Currency original)
         {
             Id = original.Id;

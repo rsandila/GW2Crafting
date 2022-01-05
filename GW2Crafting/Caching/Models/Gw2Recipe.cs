@@ -5,7 +5,13 @@ namespace GW2Crafting.Caching.Models
 {
     public class Gw2Recipe
     {
-        public Gw2Recipe() { }
+        public Gw2Recipe() 
+        {
+            CraftingDisciplines = Array.Empty<CraftingDisciplineType>();
+            Ingredients = Array.Empty<Ingredient>();
+            RecipeFlags = Array.Empty<RecipeFlag>();
+            GuildIngredients = Array.Empty<Ingredient>();
+        }
         internal Gw2Recipe(Recipe original)
         {
             Id = original.Id;
@@ -20,6 +26,10 @@ namespace GW2Crafting.Caching.Models
             {
                 GuildIngredients = original.GuildIngredients.Select(w => new Ingredient { Id = w.UpgradeId, Count = w.Count });
             }
+            else
+            {
+                GuildIngredients = Array.Empty<Ingredient>();
+            }
             OutputUpgradedId = original.OutputUpgradeId;
         }
         public int Id { get; set; }
@@ -27,10 +37,10 @@ namespace GW2Crafting.Caching.Models
         public int MinRating { get; set; }
         public int OutputItemId { get; set; }  
         public int OutputItemCount { get; set; }
-        public IEnumerable<RecipeFlag>? RecipeFlags { get; set; }
-        public IEnumerable<Ingredient>? Ingredients { get; set; }
-        public IEnumerable<CraftingDisciplineType>? CraftingDisciplines { get; set; }
-        public IEnumerable<Ingredient>? GuildIngredients { get; set; }   
+        public IEnumerable<RecipeFlag> RecipeFlags { get; set; }
+        public IEnumerable<Ingredient> Ingredients { get; set; }
+        public IEnumerable<CraftingDisciplineType> CraftingDisciplines { get; set; }
+        public IEnumerable<Ingredient> GuildIngredients { get; set; }   
         public int OutputUpgradedId { get; set; }
     }
 }

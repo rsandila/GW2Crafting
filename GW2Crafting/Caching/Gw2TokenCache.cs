@@ -61,7 +61,6 @@ namespace GW2Crafting.Caching
                             cache.Set(CalculateId(id, type), accountValue, CalculateExpiration);
                             return accountValue as T;
                         }
-                        break;
                     case CacheTypeId.Client:
                         {
                             var connection = await Get<Connection>(id, CacheTypeId.Connection);
@@ -69,8 +68,7 @@ namespace GW2Crafting.Caching
                             {
                                 return default;
                             }
-                            var client = new Gw2Client(connection) as T;
-                            if (client == null)
+                            if (new Gw2Client(connection) is not T client)
                             {
                                 return default;
                             }

@@ -3,5 +3,10 @@
   <PropertyGroup>
     <RazorPage_SelectedScaffolderID>RazorPageScaffolder</RazorPage_SelectedScaffolderID>
     <RazorPage_SelectedScaffolderCategoryPath>root/Common/RazorPage</RazorPage_SelectedScaffolderCategoryPath>
+    <ActiveDebugProfile>GW2Crafting</ActiveDebugProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\robert\Src\GitLab\GW2Crafting\GW2Crafting\Properties\PublishProfiles\192.168.1.2_5000.pubxml</NameOfLastUsedPublishProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

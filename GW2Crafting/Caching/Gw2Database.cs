@@ -11,6 +11,7 @@ namespace GW2Crafting.Caching
     {
         internal static async Task IntializeAsync()
         {
+            Console.WriteLine("Checking local cache");
             using var db = new LiteDatabase("Gw2Crafting.db");
             var colItems = db.GetCollection<Gw2Item>("Items");
 
@@ -27,6 +28,7 @@ namespace GW2Crafting.Caching
             var newIds = idList.ToList().Except(existingIds).ToList();
             if (newIds.Any())
             {
+                Console.WriteLine($"Updating {newIds.Count} items");
                 var newItems = await webApiClient.Items.ManyAsync(newIds);
                 if (newItems.Any())
                 {
@@ -43,6 +45,7 @@ namespace GW2Crafting.Caching
             var newRecipies = recipies.ToList().Except(existingRecipeIds).ToList();
             if (newRecipies.Any())
             {
+                Console.WriteLine($"Updating {newRecipies.Count} recipies");
                 var newRecipyContents = await webApiClient.Recipes.ManyAsync(newRecipies);
                 if (newRecipyContents.Any())
                 {
@@ -59,6 +62,7 @@ namespace GW2Crafting.Caching
             var newCurrencies = currencyIds.ToList().Except(existingCurrencies).ToList();
             if (newCurrencies.Any())
             {
+                Console.WriteLine($"Updating {newCurrencies.Count} currencies");
                 var newCurrencyContents = await client.WebApi.V2.Currencies.ManyAsync(newCurrencies);
                 if (newCurrencyContents.Any())
                 {

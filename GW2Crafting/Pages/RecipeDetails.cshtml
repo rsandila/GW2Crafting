@@ -1,7 +1,8 @@
 ﻿@page
+@using GW2Crafting.Common
 @model GW2Crafting.Pages.RecipeDetailsModel
 @{
-    ViewData["Title"] = $"Recipe for {Model.Recipe.OutputItem.Name}";
+    ViewData["Title"] = $"Recipe for {Model.Recipe?.OutputItem?.Name}";
 }
 <div class="text-center">
     <h3 class="display-8">@ViewData["title"]</h3>
@@ -15,10 +16,10 @@
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOutputItem" aria-expanded="false" aria-controls="collapseOutputItem">
             <div class="row">
                 <div class="col-sm-2">
-                    <img src=@Model.Recipe.OutputItem.Icon widht=32 height=32/>
+                    <img src=@Model.Recipe?.OutputItem?.Icon widht=32 height=32/>
                 </div>
                 <div class="col">
-                    @Model.Recipe.OutputItem.Name
+                    @Model.Recipe?.OutputItem?.Name
                 </div>
             </div>
           </button>
@@ -27,27 +28,27 @@
           <div class="accordion-body">
             <div class="row">
                 <div class="col">Description</div>
-                <div class="col">@Model.Recipe.OutputItem.Description</div>
+                <div class="col">@Model.Recipe?.OutputItem?.Description</div>
             </div>
             <div class="row">
                 <div class="col">Type</div>
-                <div class="col">@Model.Recipe.OutputItem.Type</div>
+                <div class="col">@Model.Recipe?.OutputItem?.Type</div>
             </div>
             <div class="row">
                 <div class="col">Level</div>
-                <div class="col">@Model.Recipe.OutputItem.Level</div>
+                <div class="col">@Model.Recipe?.OutputItem?.Level</div>
             </div>
             <div class="row">
                 <div class="col">Rarity</div>
-                <div class="col">@Model.Recipe.OutputItem.Rarity</div>
+                <div class="col">@Model.Recipe?.OutputItem?.Rarity</div>
             </div>
             <div class="row">
                 <div class="col">Vendor Value</div>
-                <div class="col">@GW2Crafting.Common.Listings.DisplayablePrice(Model.Recipe.OutputItem.VendorValue)</div>
+                <div class="col">@GW2Crafting.Common.Listings.DisplayablePrice(Model.Recipe?.OutputItem?.VendorValue ?? 0)</div>
             </div>
             <div class="row">
                 <div class="col">Flags</div>
-                <div class="col">@string.Join(",",Model.Recipe.OutputItem.Flags)</div>
+                <div class="col">@Model.Recipe?.OutputItem?.Flags.EnumToString()</div>
             </div>
           </div>
         </div>
@@ -55,26 +56,26 @@
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingRecipe">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecipe" aria-expanded="false" aria-controls="collapseRecipe">
-                Recipe Type: @Model.Recipe.Original.Type
+                Recipe Type: @Model.Recipe?.Original.Type
           </button>
         </h2>
         <div id="collapseRecipe" class="accordion-collapse collapsed" aria-labelledby="headingRecipe">
             <div class="accordion-body">
                 <div class="row">
                     <div class="col">Minimum Rating</div>
-                    <div class="col">@Model.Recipe.Original.MinRating</div>
+                    <div class="col">@Model.Recipe?.Original.MinRating</div>
                 </div>
                 <div class="row">
                     <div class="col">Items Created</div>
-                    <div class="col">@Model.Recipe.Original.OutputItemCount</div>
+                    <div class="col">@Model.Recipe?.Original.OutputItemCount</div>
                 </div>
                 <div class="row">
                     <div class="col">Flags</div>
-                    <div class="col">@string.Join(",",Model.Recipe.Original.RecipeFlags)</div>
+                    <div class="col">@Model.Recipe?.Original.RecipeFlags.EnumToString()</div>
                 </div>
                 <div class="row">
                     <div class="col">Disciplines</div>
-                    <div class="col">@string.Join(",",Model.Recipe.Original.CraftingDisciplines)</div>
+                    <div class="col">@Model.Recipe?.Original.CraftingDisciplines.EnumToString()</div>
                 </div>
             </div>
         </div>
@@ -88,19 +89,23 @@
       </h2>
       <div id="collapseIngredients" class="accordion-collapse collapse show" aria-labelledby="headingIngredients">
           <div class="accordion-body">
-              @foreach (var item in Model.Recipe.Ingredients) {
-                <div class="row">
-                    <div class="col-sm-1"><img src=@item.Icon widht=32 height=32/></div>
+              @if (Model.Recipe != null) 
+              {
+                    foreach (var item in Model.Recipe.Ingredients.Where(w => w != null))
+                    {
+                        <div class="row">
+                            <div class="col-sm-1"><img src=@item?.Icon widht=32 height=32/></div>
                     <div class="col">
-                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Level: @item.Level, Rarity: @item.Rarity, Vendor Value: @GW2Crafting.Common.Listings.DisplayablePrice(@item.VendorValue), Flags: @string.Join(",",item.Flags), Description: @item.Description">
-                             Name: @item.Name
+                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Level: @item?.Level, Rarity: @item?.Rarity, Vendor Value: @GW2Crafting.Common.Listings.DisplayablePrice(@item?.VendorValue ?? 0), Flags: @item?.Flags.EnumToString(), Description: @item?.Description">
+                             Name: @item?.Name
                         </span>
                     </div>
-                    <div class="col">Type: @item.Type</div>
-                    <div class="col">Quantity: @item.Count</div>
-                    <div class="col">Immediate Buy: @GW2Crafting.Common.Listings.DisplayablePrice((int)item.UnitSellPrice)</div>
-                    <div class="col">Listing Buy: @GW2Crafting.Common.Listings.DisplayablePrice((int)item.UnitBuyPrice)</div>
+                    <div class="col">Type: @item?.Type</div>
+                    <div class="col">Quantity: @item?.Count</div>
+                    <div class="col">Immediate Buy: @GW2Crafting.Common.Listings.DisplayablePrice((int)(item?.UnitSellPrice ?? 0))</div>
+                    <div class="col">Listing Buy: @GW2Crafting.Common.Listings.DisplayablePrice((int)(item?.UnitBuyPrice ?? 0))</div>
                 </div>
+                }
               }
           </div>
       </div>
