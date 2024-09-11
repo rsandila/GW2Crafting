@@ -1,0 +1,32 @@
+﻿@page
+@model GW2Crafting.Pages.RecipeSearchModel
+@{
+    ViewData["Title"] = $"Recipe for {Model.ItemName}";
+}
+<div class="text-center">
+    <h3 class="display-8">@ViewData["title"]</h3>
+</div>
+<a asp-page="Material">Select another material</a>
+@if (Model.Recipes.Any())
+{
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <td></td>
+                <td>Id</td>
+                <td>Name</td>
+            </tr>
+        </thead>
+        @foreach (var recipe in Model.Recipes)
+        {
+            <tr>
+                <td>@recipe.Original.Id</td>
+                <td><a asp-page="/RecipeDetails" a-asp-route-id=@recipe.Original.Id>@recipe.OutputItem?.Name</a></td>
+            </tr>
+        }        
+    </table>    
+}
+else
+{
+    <p>No applicable recipes found for the current character</p>
+}

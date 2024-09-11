@@ -25,16 +25,18 @@ namespace GW2Crafting.Pages
             var id = SessionId.GetSessionId(HttpContext);
             if (id == Guid.Empty)
             {
+                _logger.LogInformation("Redirecting to home page due to lack of session Id");
                 return RedirectToPage("Index");
             }
             if (Id == 0)
             {
-                SessionId.ResetSession(HttpContext);
-                return RedirectToPage("Index");
+                _logger.LogInformation("Redirecting to recipies due to lack of Id");
+                return RedirectToPage("Recipes");
             }
             var recipe = _database.GetRecipe(Id);
             if (recipe == null)
             {
+                _logger.LogWarning($"Unable to retrieve recipe {Id}. Resetting session.");
                 SessionId.ResetSession(HttpContext);
                 return RedirectToPage("Index");
             }

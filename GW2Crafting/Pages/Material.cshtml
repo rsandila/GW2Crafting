@@ -30,7 +30,7 @@
         <tr>
             <td><img src=@item.Icon widht=32 height=32/></td>
             <td><a href="https://api.guildwars2.com/v2/items/@item.Id" target="_blank">@item.Id</a></td>
-            <td>@item.Name</td>
+            <td><a asp-page="RecipeSearch" asp-route-ItemId=@item.Id>@item.Name</a></td>
             <td>@item.Count</td>
             <td>@item.UnitSellPrice</td>
             <td>@item.CategoryName</td>

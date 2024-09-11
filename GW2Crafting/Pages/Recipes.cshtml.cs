@@ -25,7 +25,7 @@ namespace GW2Crafting.Pages
             ListingSellPrice = outputItemPrice.GetSellingUnitPrice(0);
             ListingBuyPrice = outputItemPrice.GetBuyingUnitPrice(0);
             ListingIngredientsPrice = 0;
-            if (ingredientPrices.Values.Count() != recipe.Ingredients.Count())
+            if (ingredientPrices.Values.Count != recipe.Ingredients.Count())
             {
                 ListingIngredientsPrice = 1000000;
             }
